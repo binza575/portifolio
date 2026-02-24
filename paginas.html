@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minhas Atividades</title>
+    <style>
+        body {
+            background-color: #0f0f0f; /* Preto profundo */
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 50px;
+        }
+
+        h1 {
+            color: #a020f0; /* Roxo vibrante */
+            text-shadow: 2px 2px 10px rgba(160, 32, 240, 0.5);
+        }
+
+        .filtros {
+            margin-bottom: 30px;
+        }
+
+        button {
+            background-color: #2a0052;
+            border: 2px solid #a020f0;
+            color: white;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #a020f0;
+            box-shadow: 0 0 15px #a020f0;
+        }
+
+        .container-links {
+            display: grid;
+            gap: 15px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .card-link {
+            background-color: #1a1a1a;
+            border-left: 5px solid #a020f0;
+            padding: 15px;
+            text-decoration: none;
+            color: white;
+            border-radius: 4px;
+            transition: transform 0.2s;
+        }
+
+        .card-link:hover {
+            transform: scale(1.02);
+            background-color: #252525;
+        }
+
+        /* Lógica para esconder os links */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Minhas Atividades</h1>
+
+    <div class="filtros">
+        <button onclick="filtrar('html')">HTML</button>
+        <button onclick="filtrar('js')">JavaScript</button>
+        <button onclick="filtrar('py')">Python</button>
+    </div>
+    <div class="container-links" id="lista">
+        <a href="" class="card-link" data-tipo="html">
+            <strong>HTML - </strong>
+            <span>  HTML.</span>
+        </a>
+        
+        <a href="https://github.com/binza575/primeiro-teste-bac-end" class="card-link" data-tipo="js">
+            <strong> JS</strong>
+            <span> JavaScript.</span>
+        </a>
+        
+        <a href="" class="card-link" data-tipo="py">
+            <strong>Python </strong>
+            <span> Python.</span>
+        </a>
+    </div>
+
+    <script>
+        function filtrar(tipo) {
+            const itens = document.querySelectorAll('.card-link');
+            
+            itens.forEach(item => {
+                if (tipo === 'todos') {
+                    item.classList.remove('hidden');
+                } else {
+                    if (item.getAttribute('data-tipo') === tipo) {
+                        item.classList.remove('hidden');
+                    } else {
+                        item.classList.add('hidden');
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>
