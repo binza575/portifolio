@@ -3,67 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minhas Atividades</title>
+    <title>Meu Portfólio de Exercícios</title>
     <style>
+        /* Estilização Geral - Paleta Preto e Roxo */
         body {
-            background-color: #0f0f0f; /* Preto profundo */
-            color: #e0e0e0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            padding: 50px;
+            min-height: 100vh; /* Garante que o corpo ocupe a tela toda */
         }
 
-        h1 {
-            color: #a020f0; /* Roxo vibrante */
-            text-shadow: 2px 2px 10px rgba(160, 32, 240, 0.5);
+        header {
+            background-color: #121212;
+            border-bottom: 2px solid #7b2cbf;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            text-align: center;
+            z-index: 100;
         }
 
-        .filtros {
-            margin-bottom: 30px;
-        }
-
-        button {
-            background-color: #2a0052;
-            border: 2px solid #a020f0;
-            color: white;
-            padding: 10px 20px;
+        nav button {
+            background: none;
+            color: #9d4edd;
+            border: 2px solid #7b2cbf;
+            padding: 10px 25px;
             margin: 5px;
             cursor: pointer;
-            border-radius: 8px;
-            transition: 0.3s;
-            font-weight: bold;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
 
-        button:hover {
-            background-color: #a020f0;
-            box-shadow: 0 0 15px #a020f0;
+        nav button:hover, nav button.active {
+            background-color: #7b2cbf;
+            color: #fff;
+            box-shadow: 0 0 15px #7b2cbf;
         }
 
-        .container-links {
+        /* Grid de Exercícios */
+        .container {
+            flex: 1; /* Faz o conteúdo empurrar o rodapé para baixo */
+            max-width: 1100px;
+            margin: 50px auto;
             display: grid;
-            gap: 15px;
-            width: 100%;
-            max-width: 500px;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            padding: 0 20px 100px 20px; /* Padding extra no fundo para não cobrir o nome */
         }
 
-        .card-link {
-            background-color: #1a1a1a;
-            border-left: 5px solid #a020f0;
-            padding: 15px;
+        .card {
+            background-color: #161616;
+            border: 1px solid #2d2d2d;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            transition: transform 0.3s, border-color 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            border-color: #9d4edd;
+        }
+
+        .card h3 {
+            margin-top: 0;
+            color: #c77dff;
+        }
+
+        .btn-link {
+            display: inline-block;
             text-decoration: none;
+            background-color: #7b2cbf;
             color: white;
-            border-radius: 4px;
-            transition: transform 0.2s;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: bold;
+            transition: background 0.3s;
         }
 
-        .card-link:hover {
-            transform: scale(1.02);
-            background-color: #252525;
+        /* Rodapé com seu nome */
+        footer {
+            background-color: #121212;
+            border-top: 1px solid #7b2cbf;
+            color: #9d4edd;
+            text-align: center;
+            padding: 20px 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-transform: uppercase;
         }
 
-        /* Lógica para esconder os links */
         .hidden {
             display: none;
         }
@@ -71,47 +106,240 @@
 </head>
 <body>
 
-    <h1>Minhas Atividades</h1>
+<header>
 
-    <div class="filtros">
-        <button onclick="filtrar('html')">HTML</button>
-        <button onclick="filtrar('js')">JavaScript</button>
-        <button onclick="filtrar('py')">Python</button>
-    </div>
-    <div class="container-links" id="lista">
-        <a href="" class="card-link" data-tipo="html">
-            <strong>HTML - </strong>
-            <span>  HTML.</span>
-        </a>
-        
-        <a href="https://github.com/binza575/primeiro-teste-bac-end" class="card-link" data-tipo="js">
-            <strong> JS</strong>
-            <span> JavaScript.</span>
-        </a>
-        
-        <a href="" class="card-link" data-tipo="py">
-            <strong>Python </strong>
-            <span> Python.</span>
-        </a>
+    <h1>Ricardo Surek Corbaxo 3°A</h1>
+
+    <nav>
+        <button onclick="filtrar('todos', event)" class="active">Mostrar Todos</button>
+        <button onclick="filtrar('html', event)">HTML</button>
+        <button onclick="filtrar('js', event)">JS</button>
+        <button onclick="filtrar('python', event)">Python</button>
+        <button onclick="filtrar('analise', event)">Análise</button>
+    </nav>
+</header>
+
+<div class="container">
+    <div class="card" data-category="html">
+        <h3>Exercício HTML</h3>
+        <h4>Hello wrord</h4>
+        <a href="https://github.com/binza575/hello-word/blob/main/hello%20wrord.html" target="_blank" class="btn-link">Ver Exercício</a>
     </div>
 
-    <script>
-        function filtrar(tipo) {
-            const itens = document.querySelectorAll('.card-link');
-            
-            itens.forEach(item => {
-                if (tipo === 'todos') {
-                    item.classList.remove('hidden');
-                } else {
-                    if (item.getAttribute('data-tipo') === tipo) {
-                        item.classList.remove('hidden');
-                    } else {
-                        item.classList.add('hidden');
-                    }
-                }
-            });
-        }
-    </script>
+    <div class="card" data-category="html">
+        <h3>Exercício HTML</h3>
+        <h4>Pac-Man</h4>
+        <a href="../Robinho/As_nos/Ricardo/pecmem.html" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Alterar</h4>
+        <a href="https://github.com/binza575/alterar/blob/main/alterar.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Array</h4>
+        <a href="https://github.com/binza575/array-fruta/blob/main/array.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Brake_continue</h4>
+        <a href="https://github.com/binza575/break-continue/blob/main/brake_continue.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Carro</h4>
+        <a href="https://github.com/binza575/carro/blob/main/Carro.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Cliente.json</h4>
+        <a href="https://github.com/binza575/cliente-json/blob/main/cliente.json" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Filtrar</h4>
+        <a href="https://github.com/binza575/filtrar/blob/main/filtrar.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Lista livros</h4>
+        <a href="https://github.com/binza575/lista-livros/blob/main/listalivros.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Média_se</h4>
+        <a href="https://github.com/binza575/lista-livros/blob/main/listalivros.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Colchete</h4>
+        <a href="https://github.com/binza575/colchete/blob/main/colchete.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Delta</h4>
+        <a href="https://github.com/binza575/delta/blob/main/delta.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Hello wrord</h4>
+        <a href="https://github.com/binza575/hello-whord/blob/main/hello%20wrord.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Leitura2</h4>
+        <a href="https://github.com/binza575/leitura2/blob/main/leitura2.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Media</h4>
+        <a href="https://github.com/binza575/media/blob/main/media_se.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Notas</h4>
+        <a href="https://github.com/binza575/notas/blob/main/notas.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Objeto</h4>
+        <a href="https://github.com/binza575/objeto/blob/main/objeto.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Operações</h4>
+        <a href="https://github.com/binza575/operacoes/blob/main/operacoes.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Triangulo</h4>
+        <a href="https://github.com/binza575/triangulo/blob/main/triangulo.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Usando break</h4>
+        <a href="https://github.com/binza575/usando-break/blob/main/usandobreak.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Usando form</h4>
+        <a href="https://github.com/binza575/usando-form/blob/main/usandoform.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>SelectionSort</h4>
+        <a href="https://github.com/binza575/selectionSort/blob/main/selectionSort.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Variaveis</h4>
+        <a href="https://github.com/binza575/variaveis/blob/main/variaveis.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Objet2</h4>
+        <a href="https://github.com/binza575/objet2/blob/main/objet2.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    
+    <div class="card" data-category="js">
+        <h3>Exercício JS</h3>
+        <h4>Ordenado</h4>
+        <a href="https://github.com/binza575/ordenado/blob/main/ordenado.js" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+    
+
+    <div class="card" data-category="analise">
+        <h3>Análise
+            <h4>Startups em 2026</h4>
+        </h3>
+        <a href="https://gamma.app/docs/Startups-em-2026-A-Vanguarda-da-Inovacao-2az7tt4390noy2l?mode=doc" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="analise">
+        <h3>Análise</h3>
+        <h4>Plano de negocios</h4>
+        <a href="https://gamma.app/docs/Plano-de-Negocios-Aplicativo-Agenda-Escolar-rig4f88pyoq8cu8?mode=doc" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="analise">
+        <h3>Análise</h3>
+        <h4>Aplicativo escolar</h4>
+        <a href="https://gamma.app/docs/Aplicativo-Escolar-A-Escola-na-Palma-da-Sua-Mao-k7of6kzcft325mv?mode=doc" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="analise">
+        <h3>Análise</h3>
+        <h4>Propriedade intelectual</h4>
+        <a href="https://gamma.app/docs/Propriedade-Intelectual-0pivkhtz1fkmn44?mode=doc" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="analise">
+        <h3>Análise</h3>
+        <h4>Metricas e melhorias nos negócios</h4>
+        <a href="https://gamma.app/docs/Metricas-e-Melhorias-nos-Negocios-keenpujabse1qco?mode=doc" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+
+    <div class="card" data-category="python">
+        <h3>Exercício Python</h3>
+        <a href="LINK_AQUI" target="_blank" class="btn-link">Ver Exercício</a>
+    </div>
+   
+    
+</div>
+
+<footer>
+    Ricardo Surek Corbaxo 3°A
+</footer>
+
+<script>
+    function filtrar(categoria, event) {
+        const cards = document.querySelectorAll('.card');
+        const botoes = document.querySelectorAll('nav button');
+
+        botoes.forEach(btn => btn.classList.remove('active'));
+        event.currentTarget.classList.add('active');
+
+        cards.forEach(card => {
+            if (categoria === 'todos' || card.getAttribute('data-category') === categoria) {
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
+        });
+    }
+</script>
 
 </body>
 </html>
