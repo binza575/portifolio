@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Pac-Man - Começo Seguro e Fantasmas Persistentes</title>
+    <title>Pac-Man - Clássico Aprimorado</title>
     <style>
         * {
             user-select: none;
@@ -11,7 +11,7 @@
         }
 
         body {
-            background: #000;
+            background: linear-gradient(135deg, #000000, #1a1a2e);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -25,7 +25,7 @@
             background: #000;
             padding: 10px;
             border-radius: 12px;
-            box-shadow: 0 0 20px rgba(255, 255, 0, 0.3);
+            box-shadow: 0 0 30px rgba(255, 255, 0, 0.3);
         }
 
         canvas {
@@ -33,6 +33,7 @@
             margin: 0 auto;
             box-shadow: 0 0 0 2px #ff0, 0 0 0 4px #333;
             background-color: #000;
+            cursor: pointer;
         }
 
         .info-panel {
@@ -93,11 +94,28 @@
             border-radius: 30px;
             cursor: pointer;
             font-size: 1rem;
+            transition: all 0.2s;
         }
 
         button:hover {
             background: #ff9900;
             transform: scale(1.02);
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        .start-btn {
+            background: #00aa44;
+            color: white;
+            font-size: 1.1rem;
+            padding: 8px 20px;
+            animation: pulse 1s infinite;
+        }
+
+        .start-btn:hover {
+            background: #00cc55;
         }
     </style>
 </head>
@@ -110,11 +128,12 @@
             <div class="lives">❤️ VIDAS: <span id="livesValue">3</span></div>
             <div class="phase">🌀 FASE: <span id="phaseValue">1</span></div>
             <div class="ghost-count">👻 FANTASMAS: <span id="ghostCount">9</span></div>
-            <div class="safe-timer" id="safeTimerDisplay">🛡️ PROTEÇÃO: 3s</div>
-            <button id="resetBtn">🔄 REINICIAR</button>
+            <div class="safe-timer" id="safeTimerDisplay" style="display: none;">🛡️ PROTEÇÃO: 3s</div>
+            <button id="startBtn" class="start-btn">🎮 INICIAR JOGO</button>
+            <button id="resetBtn" style="background:#ff6600;">🔄 REINICIAR</button>
         </div>
         <div class="controls-hint">
-            🎮 SETAS ← ↑ → ↓ : Movimento suave | Coma pílulas especiais (⍟) para caçar fantasmas | Início com proteção temporária!
+            🎮 SETAS ← ↑ → ↓ : Movimente o Pac-Man | ⍟ Pílulas especiais deixam fantasmas vulneráveis | Proteção inicial de 3 segundos
         </div>
     </div>
 </div>
@@ -176,10 +195,11 @@
                 this.color = color;
                 this.id = id;
                 this.scared = false;
-                this.dirX = 1;
+                this.dirX = (Math.random() > 0.5 ? 1 : -1);
                 this.dirY = 0;
                 this.velocityX = 0;
                 this.velocityY = 0;
+                this.waypointTimer = 0;
             }
             
             reset(){
@@ -188,10 +208,8 @@
                 this.pixelX = this.startX * CELL_SIZE;
                 this.pixelY = this.startY * CELL_SIZE;
                 this.scared = false;
-                this.dirX = 1;
+                this.dirX = (Math.random() > 0.5 ? 1 : -1);
                 this.dirY = 0;
-                this.velocityX = 0;
-                this.velocityY = 0;
             }
         }
         
@@ -201,18 +219,23 @@
         let phase = 1;
         let gameOver = false;
         let gameWin = false;
+        let gameRunning = false; // Jogo só começa após clicar em INICIAR
         let invincibleMode = false;
         let invincibleTimer = 0;
         let dotsRemaining = 0;
         let animationId = null;
         
         // Sistema de proteção inicial (invulnerabilidade temporária)
-        let protectTimer = 3.0;     // 3 segundos de proteção no início e após respawn
+        let protectTimer = 3.0;
         let isProtected = true;
+        
+        // Animações
+        let mouthAngle = 0.3;
+        let mouthOpening = false;
         
         // Sistema de movimento suave do Pac-Man
         let pacman = { 
-            gridX: 2, gridY: 26,      // Posição segura: canto inferior esquerdo (longe dos fantasmas)
+            gridX: 2, gridY: 26,
             pixelX: 2 * CELL_SIZE,
             pixelY: 26 * CELL_SIZE,
             velocityX: 0,
@@ -223,10 +246,8 @@
             currentDirY: 0
         };
         
-        const PACMAN_ACCELERATION = 800;
-        const PACMAN_MAX_SPEED = 280;
-        const PACMAN_BRAKE_FORCE = 500;
-        const GHOST_BASE_SPEED = 130;
+        const PACMAN_SPEED = 200;
+        const GHOST_SPEED = 150;
         
         let keysPressed = {
             ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false
@@ -235,30 +256,38 @@
         // Cores para os 9 fantasmas
         const GHOST_COLORS = ["#FF0000", "#FF69B4", "#00FFFF", "#FFA500", "#800080", "#32CD32", "#FFD700", "#FFFFFF", "#FF6347"];
         
-        // Posições dos fantasmas - todas LONGES do ponto de spawn do Pac-Man (canto inferior esquerdo)
-        // Pac-Man spawn em (2, 26) - canto inferior esquerdo
-        // Fantasmas spawn no centro e canto superior direito, bem distantes
+        // Posições válidas dos fantasmas (garantindo que não fiquem em paredes)
         const ghostStartPositions = [
-            {x: 14, y: 14},  // centro - distante
-            {x: 20, y: 8},   // canto superior direito - muito distante
-            {x: 22, y: 10},  // direita superior
-            {x: 18, y: 12},  // direita meio
-            {x: 16, y: 14},  // centro-direita
-            {x: 12, y: 14},  // centro-esquerda
-            {x: 24, y: 6},   // canto extremo direito
-            {x: 8, y: 8},    // canto superior esquerdo
-            {x: 20, y: 16}   // direita inferior meio
+            {x: 14, y: 14},
+            {x: 13, y: 14},
+            {x: 15, y: 14},
+            {x: 14, y: 13},
+            {x: 14, y: 15},
+            {x: 20, y: 8},
+            {x: 21, y: 9},
+            {x: 5, y: 8},
+            {x: 22, y: 12}
         ];
         
         function buildMapFromBase(){
             labMap = [];
             for(let i=0; i<optimizedMap.length; i++){
                 let row = optimizedMap[i];
-                if(row.length < MAP_WIDTH){
-                    row = row + ' '.repeat(MAP_WIDTH - row.length);
+                while(row.length < MAP_WIDTH){
+                    row = row + ' ';
                 }
                 labMap.push(row.split(''));
             }
+        }
+        
+        function isWall(gridX, gridY){
+            if(gridX < 0 || gridX >= MAP_WIDTH || gridY < 0 || gridY >= MAP_HEIGHT) return true;
+            let cell = labMap[gridY][gridX];
+            return cell === '#';
+        }
+        
+        function isValidPosition(gridX, gridY){
+            return !isWall(gridX, gridY);
         }
         
         function countDots(){
@@ -286,6 +315,7 @@
         function resetGame(){
             gameOver = false;
             gameWin = false;
+            gameRunning = false; // Jogo parado até clicar em iniciar
             phase = 1;
             lives = 3;
             score = 0;
@@ -295,12 +325,15 @@
             isProtected = true;
             updateUI();
             loadPhase(phase);
+            draw(); // Desenha o estado inicial
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('safeTimerDisplay').style.display = 'none';
         }
         
         function loadPhase(ph){
             buildMapFromBase();
             
-            // Posição segura para o Pac-Man (canto inferior esquerdo)
+            // Posição segura para o Pac-Man
             pacman.gridX = 2;
             pacman.gridY = 26;
             pacman.pixelX = 2 * CELL_SIZE;
@@ -317,18 +350,43 @@
             ghosts = initGhosts();
             
             dotsRemaining = countDots();
-            if(dotsRemaining === 0){
+            if(dotsRemaining === 0 && gameRunning){
                 nextLevel();
             }
             invincibleMode = false;
             invincibleTimer = 0;
             
-            // Ativar proteção no início da fase
-            protectTimer = 3.0;
-            isProtected = true;
+            if(gameRunning){
+                protectTimer = 3.0;
+                isProtected = true;
+            }
             
             updateUI();
             updateGhostCountUI();
+        }
+        
+        function startGame(){
+            if(!gameOver && !gameRunning){
+                gameRunning = true;
+                document.getElementById('startBtn').style.display = 'none';
+                protectTimer = 3.0;
+                isProtected = true;
+                updateSafeTimerUI();
+                // Forçar início do loop
+                if(animationId) cancelAnimationFrame(animationId);
+                lastTimestamp = performance.now();
+                animationId = requestAnimationFrame(gameLoop);
+            } else if(gameOver){
+                resetGame();
+                gameRunning = true;
+                document.getElementById('startBtn').style.display = 'none';
+                protectTimer = 3.0;
+                isProtected = true;
+                updateSafeTimerUI();
+                if(animationId) cancelAnimationFrame(animationId);
+                lastTimestamp = performance.now();
+                animationId = requestAnimationFrame(gameLoop);
+            }
         }
         
         function updateGhostCountUI(){
@@ -336,21 +394,18 @@
         }
         
         function updateSafeTimerUI(){
-            if(isProtected){
-                document.getElementById('safeTimerDisplay').innerHTML = `🛡️ PROTEÇÃO: ${Math.ceil(protectTimer)}s`;
-                document.getElementById('safeTimerDisplay').style.display = 'inline-block';
+            const timerDiv = document.getElementById('safeTimerDisplay');
+            if(isProtected && gameRunning && !gameOver){
+                timerDiv.innerHTML = `🛡️ PROTEÇÃO: ${Math.ceil(protectTimer)}s`;
+                timerDiv.style.display = 'inline-block';
             } else {
-                document.getElementById('safeTimerDisplay').style.display = 'none';
+                timerDiv.style.display = 'none';
             }
         }
         
-        function isWall(gridX, gridY){
-            if(gridX<0 || gridX>=MAP_WIDTH || gridY<0 || gridY>=MAP_HEIGHT) return true;
-            let cell = labMap[gridY][gridX];
-            return cell === '#';
-        }
-        
         function updatePacmanMovement(deltaTime){
+            if(!gameRunning || gameOver) return;
+            
             let desiredDirX = 0, desiredDirY = 0;
             if(keysPressed.ArrowUp) { desiredDirX = 0; desiredDirY = -1; }
             else if(keysPressed.ArrowDown) { desiredDirX = 0; desiredDirY = 1; }
@@ -360,66 +415,52 @@
             pacman.targetDirX = desiredDirX;
             pacman.targetDirY = desiredDirY;
             
-            let isMoving = (desiredDirX !== 0 || desiredDirY !== 0);
-            
-            if(isMoving){
-                let accelX = desiredDirX * PACMAN_ACCELERATION * deltaTime;
-                let accelY = desiredDirY * PACMAN_ACCELERATION * deltaTime;
-                pacman.velocityX += accelX;
-                pacman.velocityY += accelY;
-                
-                let speed = Math.hypot(pacman.velocityX, pacman.velocityY);
-                if(speed > PACMAN_MAX_SPEED){
-                    pacman.velocityX = (pacman.velocityX / speed) * PACMAN_MAX_SPEED;
-                    pacman.velocityY = (pacman.velocityY / speed) * PACMAN_MAX_SPEED;
-                }
-                
-                if(speed > 5){
+            // Tentar mudar de direção se possível
+            if(desiredDirX !== 0 || desiredDirY !== 0){
+                let newGridX = pacman.gridX + desiredDirX;
+                let newGridY = pacman.gridY + desiredDirY;
+                if(isValidPosition(newGridX, newGridY)){
                     pacman.currentDirX = desiredDirX;
                     pacman.currentDirY = desiredDirY;
                 }
-            } else {
-                let brake = PACMAN_BRAKE_FORCE * deltaTime;
-                let speed = Math.hypot(pacman.velocityX, pacman.velocityY);
-                if(speed > brake){
-                    pacman.velocityX -= (pacman.velocityX / speed) * brake;
-                    pacman.velocityY -= (pacman.velocityY / speed) * brake;
-                } else {
-                    pacman.velocityX = 0;
-                    pacman.velocityY = 0;
-                }
             }
             
-            let newPixelX = pacman.pixelX + pacman.velocityX * deltaTime;
-            let newPixelY = pacman.pixelY + pacman.velocityY * deltaTime;
+            // Movimento na direção atual
+            let moveDistance = PACMAN_SPEED * deltaTime;
+            let newPixelX = pacman.pixelX + (pacman.currentDirX * moveDistance);
+            let newPixelY = pacman.pixelY + (pacman.currentDirY * moveDistance);
             let newGridX = Math.round(newPixelX / CELL_SIZE);
             let newGridY = Math.round(newPixelY / CELL_SIZE);
             
-            if(!isWall(newGridX, newGridY)){
+            // Ajustar para não sair dos limites
+            newGridX = Math.max(0, Math.min(MAP_WIDTH-1, newGridX));
+            newGridY = Math.max(0, Math.min(MAP_HEIGHT-1, newGridY));
+            
+            if(isValidPosition(newGridX, newGridY)){
                 pacman.pixelX = newPixelX;
                 pacman.pixelY = newPixelY;
                 pacman.gridX = newGridX;
                 pacman.gridY = newGridY;
             } else {
-                let tryX = pacman.pixelX + pacman.velocityX * deltaTime;
-                let tryGridX = Math.round(tryX / CELL_SIZE);
-                if(!isWall(tryGridX, pacman.gridY)){
+                // Tenta mover só no eixo X
+                let tryX = pacman.pixelX + (pacman.currentDirX * moveDistance);
+                let testGridX = Math.round(tryX / CELL_SIZE);
+                testGridX = Math.max(0, Math.min(MAP_WIDTH-1, testGridX));
+                if(isValidPosition(testGridX, pacman.gridY)){
                     pacman.pixelX = tryX;
-                    pacman.gridX = tryGridX;
-                } else {
-                    pacman.velocityX = 0;
+                    pacman.gridX = testGridX;
                 }
-                
-                let tryY = pacman.pixelY + pacman.velocityY * deltaTime;
-                let tryGridY = Math.round(tryY / CELL_SIZE);
-                if(!isWall(pacman.gridX, tryGridY)){
+                // Tenta mover só no eixo Y
+                let tryY = pacman.pixelY + (pacman.currentDirY * moveDistance);
+                let testGridY = Math.round(tryY / CELL_SIZE);
+                testGridY = Math.max(0, Math.min(MAP_HEIGHT-1, testGridY));
+                if(isValidPosition(pacman.gridX, testGridY)){
                     pacman.pixelY = tryY;
-                    pacman.gridY = tryGridY;
-                } else {
-                    pacman.velocityY = 0;
+                    pacman.gridY = testGridY;
                 }
             }
             
+            // Comer pontos
             let cell = labMap[pacman.gridY][pacman.gridX];
             if(cell === '.'){
                 labMap[pacman.gridY][pacman.gridX] = ' ';
@@ -438,42 +479,49 @@
                 }
             }
             
-            if(dotsRemaining === 0){
+            if(dotsRemaining === 0 && gameRunning){
                 nextLevel();
             }
         }
         
-        // IA de perseguição dos fantasmas
         function updateGhostsMovement(deltaTime){
+            if(!gameRunning || gameOver) return;
+            
             for(let ghost of ghosts){
-                let moveDistance = GHOST_BASE_SPEED * deltaTime;
+                let moveDistance = GHOST_SPEED * deltaTime;
                 
+                // Busca pelo Pac-Man
                 let targetX = pacman.gridX;
                 let targetY = pacman.gridY;
                 
-                // Estratégias variadas de perseguição
+                // Estratégias diferentes para cada fantasma
                 if(ghost.id % 3 === 1){
                     targetX = pacman.gridX;
                     targetY = pacman.gridY;
-                } else if(ghost.id % 3 === 2){
-                    targetX = pacman.gridX + pacman.currentDirX * 4;
-                    targetY = pacman.gridY + pacman.currentDirY * 4;
-                } else {
-                    targetX = pacman.gridX;
-                    targetY = pacman.gridY;
+                } else if(ghost.id % 3 === 2 && pacman.currentDirX !== 0 || pacman.currentDirY !== 0){
+                    targetX = pacman.gridX + pacman.currentDirX * 3;
+                    targetY = pacman.gridY + pacman.currentDirY * 3;
                 }
                 
                 targetX = Math.max(0, Math.min(MAP_WIDTH-1, targetX));
                 targetY = Math.max(0, Math.min(MAP_HEIGHT-1, targetY));
                 
+                // Encontrar melhor direção (BFS-like para movimento suave)
                 let bestDirX = 0, bestDirY = 0;
                 let bestDistance = Infinity;
                 
                 const directions = [[0,-1],[0,1],[-1,0],[1,0]];
-                for(let [dx, dy] of directions){
+                // Embaralhar para evitar comportamento muito previsível
+                let shuffled = [...directions];
+                for(let i = shuffled.length - 1; i > 0; i--){
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+                }
+                
+                for(let [dx, dy] of shuffled){
                     let newX = ghost.gridX + dx;
                     let newY = ghost.gridY + dy;
-                    if(!isWall(newX, newY)){
+                    if(isValidPosition(newX, newY)){
                         let distance = Math.abs(newX - targetX) + Math.abs(newY - targetY);
                         if(distance < bestDistance){
                             bestDistance = distance;
@@ -486,28 +534,18 @@
                 if(bestDirX !== 0 || bestDirY !== 0){
                     ghost.dirX = bestDirX;
                     ghost.dirY = bestDirY;
-                } else {
-                    let possible = [];
-                    for(let [dx, dy] of directions){
-                        let newX = ghost.gridX + dx;
-                        let newY = ghost.gridY + dy;
-                        if(!isWall(newX, newY)){
-                            possible.push([dx, dy]);
-                        }
-                    }
-                    if(possible.length > 0){
-                        let rand = Math.floor(Math.random() * possible.length);
-                        ghost.dirX = possible[rand][0];
-                        ghost.dirY = possible[rand][1];
-                    }
                 }
                 
+                // Movimento
                 let targetPixelX = ghost.pixelX + (ghost.dirX * moveDistance);
                 let targetPixelY = ghost.pixelY + (ghost.dirY * moveDistance);
                 let targetGridX = Math.round(targetPixelX / CELL_SIZE);
                 let targetGridY = Math.round(targetPixelY / CELL_SIZE);
                 
-                if(!isWall(targetGridX, targetGridY)){
+                targetGridX = Math.max(0, Math.min(MAP_WIDTH-1, targetGridX));
+                targetGridY = Math.max(0, Math.min(MAP_HEIGHT-1, targetGridY));
+                
+                if(isValidPosition(targetGridX, targetGridY)){
                     ghost.pixelX = targetPixelX;
                     ghost.pixelY = targetPixelY;
                     ghost.gridX = targetGridX;
@@ -517,7 +555,7 @@
         }
         
         function handleCollisions(){
-            // Se estiver protegido, não pode morrer
+            if(!gameRunning || gameOver) return;
             if(isProtected) return;
             
             for(let i=0; i<ghosts.length; i++){
@@ -537,8 +575,8 @@
                         updateUI();
                         if(lives <= 0){
                             gameOver = true;
+                            gameRunning = false;
                             gameWin = false;
-                            cancelAnimationFrame(animationId);
                             draw();
                             return;
                         } else {
@@ -551,7 +589,7 @@
         }
         
         function respawnAfterDeath(){
-            // Resetar posição do Pac-Man para o canto seguro
+            // Resetar posição do Pac-Man
             pacman.gridX = 2;
             pacman.gridY = 26;
             pacman.pixelX = 2 * CELL_SIZE;
@@ -569,16 +607,16 @@
             invincibleMode = false;
             invincibleTimer = 0;
             
-            // Ativar proteção após respawn
             protectTimer = 3.0;
             isProtected = true;
+            updateSafeTimerUI();
         }
         
         function nextLevel(){
-            if(phase === 3){
+            if(phase >= 3){
                 gameWin = true;
                 gameOver = true;
-                cancelAnimationFrame(animationId);
+                gameRunning = false;
                 draw();
                 return;
             } else {
@@ -600,13 +638,25 @@
         }
         
         function updateProtectTimer(deltaTime){
-            if(isProtected){
+            if(isProtected && gameRunning && !gameOver){
                 protectTimer -= deltaTime;
                 if(protectTimer <= 0){
                     isProtected = false;
                 }
                 updateSafeTimerUI();
             }
+        }
+        
+        function updateMouthAnimation(){
+            if(!gameRunning) return;
+            if(mouthOpening){
+                mouthAngle += 0.8;
+                if(mouthAngle >= 0.8) mouthOpening = false;
+            } else {
+                mouthAngle -= 0.8;
+                if(mouthAngle <= 0.2) mouthOpening = true;
+            }
+            mouthAngle = Math.max(0.15, Math.min(0.85, mouthAngle));
         }
         
         function updateUI(){
@@ -629,14 +679,16 @@
                         ctx.fillRect(x, y, CELL_SIZE-0.5, CELL_SIZE-0.5);
                         ctx.fillStyle = "#2a2aaa";
                         ctx.fillRect(x+2, y+2, CELL_SIZE-4, CELL_SIZE-4);
+                        ctx.fillStyle = "#3a3acc";
+                        ctx.fillRect(x+1, y+1, CELL_SIZE-2, 1);
                     } else if(cell === '.'){
                         ctx.fillStyle = "#ffff99";
                         ctx.beginPath();
-                        ctx.arc(x+CELL_SIZE/2, y+CELL_SIZE/2, 3, 0, Math.PI*2);
+                        ctx.arc(x+CELL_SIZE/2, y+CELL_SIZE/2, 2.5, 0, Math.PI*2);
                         ctx.fill();
                         ctx.fillStyle = "#ffff44";
                         ctx.beginPath();
-                        ctx.arc(x+CELL_SIZE/2, y+CELL_SIZE/2, 1.5, 0, Math.PI*2);
+                        ctx.arc(x+CELL_SIZE/2, y+CELL_SIZE/2, 1.2, 0, Math.PI*2);
                         ctx.fill();
                     } else if(cell === 'o'){
                         ctx.fillStyle = "#ffaa44";
@@ -657,22 +709,21 @@
                 }
             }
             
-            // Desenhar Pac-Man
+            // Desenhar Pac-Man com boca animada
             let angle = 0;
             if(pacman.currentDirX === 1) angle = 0;
             else if(pacman.currentDirX === -1) angle = Math.PI;
             else if(pacman.currentDirY === -1) angle = -Math.PI/2;
             else if(pacman.currentDirY === 1) angle = Math.PI/2;
             
-            // Efeito de brilho se estiver protegido
-            if(isProtected){
-                ctx.shadowBlur = 15;
+            if(isProtected && gameRunning){
+                ctx.shadowBlur = 12;
                 ctx.shadowColor = "#00ff00";
             }
             
             ctx.fillStyle = "#ffff00";
             ctx.beginPath();
-            ctx.arc(pacman.pixelX + CELL_SIZE/2, pacman.pixelY + CELL_SIZE/2, 9, angle+0.3, angle+Math.PI*2-0.3);
+            ctx.arc(pacman.pixelX + CELL_SIZE/2, pacman.pixelY + CELL_SIZE/2, 9, angle + mouthAngle, angle + Math.PI*2 - mouthAngle);
             ctx.lineTo(pacman.pixelX + CELL_SIZE/2, pacman.pixelY + CELL_SIZE/2);
             ctx.fill();
             
@@ -685,7 +736,11 @@
             
             // Desenhar fantasmas
             for(let ghost of ghosts){
-                let color = ghost.scared ? "#8888ff" : ghost.color;
+                let color = ghost.scared ? "#8A2BE2" : ghost.color;
+                if(ghost.scared && invincibleMode){
+                    if(Date.now() % 200 < 100) color = "#FFFFFF";
+                    else color = "#8A2BE2";
+                }
                 ctx.fillStyle = color;
                 ctx.beginPath();
                 ctx.arc(ghost.pixelX + CELL_SIZE/2, ghost.pixelY + CELL_SIZE/2 - 2, 8, 0, Math.PI*2);
@@ -713,36 +768,53 @@
                 ctx.fill();
             }
             
-            if(invincibleMode){
-                ctx.font = "bold 18 monospace";
+            if(invincibleMode && gameRunning){
+                ctx.font = "bold 16 monospace";
                 ctx.fillStyle = "#ff66ff";
-                ctx.fillText("⚡ MODO CAÇA FANTASMAS! ⚡", canvas.width/2-140, 35);
+                ctx.shadowBlur = 3;
+                ctx.fillText("⚡ MODO CAÇA! ⚡", canvas.width/2-90, 35);
             }
             
-            if(isProtected){
-                ctx.font = "bold 20 monospace";
+            if(isProtected && gameRunning && !gameOver){
+                ctx.font = "bold 18 monospace";
                 ctx.fillStyle = "#00ff88";
                 ctx.shadowBlur = 5;
-                ctx.shadowColor = "#00ff00";
-                ctx.fillText("🛡️ INVULNERÁVEL", canvas.width/2-85, 70);
+                ctx.fillText("🛡️ INVULNERÁVEL", canvas.width/2-80, 65);
                 ctx.shadowBlur = 0;
             }
             
             if(gameOver){
-                ctx.font = "bold 32 monospace";
+                ctx.font = "bold 28 monospace";
                 ctx.fillStyle = gameWin ? "#ffdd44" : "#ff3300";
                 let msg = gameWin ? "🏆 VITÓRIA! PARABÉNS! 🏆" : "💀 GAME OVER 💀";
                 ctx.fillText(msg, canvas.width/2-ctx.measureText(msg).width/2, canvas.height/2);
                 
-                ctx.font = "18 monospace";
+                ctx.font = "16 monospace";
                 ctx.fillStyle = "#ffff00";
-                let restartMsg = "Clique em REINICIAR para jogar novamente";
+                let restartMsg = "Clique em INICIAR para jogar novamente";
                 ctx.fillText(restartMsg, canvas.width/2-ctx.measureText(restartMsg).width/2, canvas.height/2+50);
+            } else if(!gameRunning && !gameOver){
+                ctx.font = "bold 24 monospace";
+                ctx.fillStyle = "#ffcc00";
+                let msg = "CLIQUE EM INICIAR";
+                ctx.fillText(msg, canvas.width/2-ctx.measureText(msg).width/2, canvas.height/2);
+                ctx.font = "14 monospace";
+                ctx.fillStyle = "#aaaaaa";
+                let submsg = "Use as setas do teclado";
+                ctx.fillText(submsg, canvas.width/2-ctx.measureText(submsg).width/2, canvas.height/2+40);
             }
         }
         
         let lastTimestamp = 0;
+        let lastMouthUpdate = 0;
+        
         function gameLoop(now){
+            if(!gameRunning && !gameOver){
+                draw();
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+            
             if(gameOver){
                 draw();
                 requestAnimationFrame(gameLoop);
@@ -756,6 +828,12 @@
                 return;
             }
             lastTimestamp = now;
+            
+            // Atualizar animação da boca a cada 80ms
+            if(now - lastMouthUpdate > 0.08){
+                updateMouthAnimation();
+                lastMouthUpdate = now;
+            }
             
             updateProtectTimer(delta);
             updatePacmanMovement(delta);
@@ -787,13 +865,23 @@
         
         window.addEventListener('keydown', keydownHandler);
         window.addEventListener('keyup', keyupHandler);
-        document.getElementById('resetBtn').addEventListener('click', ()=>{
+        
+        document.getElementById('startBtn').addEventListener('click', () => {
+            startGame();
+        });
+        
+        document.getElementById('resetBtn').addEventListener('click', () => {
             cancelAnimationFrame(animationId);
             resetGame();
-            animationId = requestAnimationFrame(gameLoop);
+            draw();
+            if(gameRunning){
+                lastTimestamp = performance.now();
+                animationId = requestAnimationFrame(gameLoop);
+            }
         });
         
         resetGame();
+        draw();
         lastTimestamp = performance.now();
         animationId = requestAnimationFrame(gameLoop);
     })();
