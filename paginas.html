@@ -1,21 +1,226 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Portfólio de Exercícios</title>
+    <title>Ricardo Surek Corbaxo | Portfólio</title>
     <style>
-        /* Estilização Geral - Paleta Preto e Roxo */
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0a0a0a;
-            color: #ffffff;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background-color: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        /* ========== PÁGINA INICIAL ========== */
+        .home-page {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 100%);
+            overflow-y: auto;
+            z-index: 1000;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            padding: 40px 20px;
+        }
+
+        .home-page.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Container interno com espaçamento */
+        .home-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cabeçalho estilizado */
+        .home-header {
+            text-align: center;
+            margin-bottom: 40px;
+            border-bottom: 2px solid #7b2cbf;
+            display: inline-block;
+            width: 100%;
+            padding-bottom: 20px;
+        }
+
+        .home-header h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #c77dff, #9d4edd);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+        }
+
+        .home-header .tagline {
+            color: #b87cff;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        /* Cartões de texto em grid */
+        .info-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .info-card {
+            background: #121212;
+            border-radius: 24px;
+            padding: 28px;
+            flex: 1;
+            min-width: 250px;
+            border: 1px solid #2a2a2a;
+            transition: transform 0.25s ease, border-color 0.2s;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+
+        .info-card:hover {
+            transform: translateY(-6px);
+            border-color: #9d4edd;
+        }
+
+        .info-card h3 {
+            font-size: 1.6rem;
+            color: #c77dff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-card p {
+            color: #d0d0d0;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        /* Seção de "O que terá no portfólio" em QUADRADOS */
+        .preview-section {
+            margin: 50px 0 40px;
+        }
+
+        .preview-section h2 {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #c77dff;
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .preview-section h2:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: #9d4edd;
+            margin: 12px auto 0;
+            border-radius: 3px;
+        }
+
+        .quadrados-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .quadrado {
+            background: #0f0f0f;
+            border: 1px solid #2c2c2c;
+            border-radius: 20px;
+            width: 180px;
+            padding: 28px 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .quadrado:hover {
+            border-color: #c77dff;
+            transform: scale(1.05);
+            background: #1a1a2a;
+            box-shadow: 0 0 18px rgba(123,44,191,0.5);
+        }
+
+        .quadrado .emoji {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .quadrado h4 {
+            font-size: 1.2rem;
+            color: #c77dff;
+            margin-bottom: 8px;
+        }
+
+        .quadrado p {
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+
+        /* Botão wrapper */
+        .btn-wrapper {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0 30px;
+        }
+
+        .btn-entrar {
+            background: linear-gradient(135deg, #7b2cbf, #9d4edd);
+            color: white;
+            border: none;
+            padding: 16px 48px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(123, 44, 191, 0.5);
+            letter-spacing: 1px;
+        }
+
+        .btn-entrar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 28px rgba(123, 44, 191, 0.9);
+            background: linear-gradient(135deg, #8e3ddf, #b05eff);
+        }
+
+        /* ========== PORTFÓLIO (segunda tela) ========== */
+        .portfolio {
             display: flex;
             flex-direction: column;
-            min-height: 100vh; /* Garante que o corpo ocupe a tela toda */
+            min-height: 100vh;
         }
 
         header {
@@ -46,15 +251,14 @@
             box-shadow: 0 0 15px #7b2cbf;
         }
 
-        /* Grid de Exercícios */
         .container {
-            flex: 1; /* Faz o conteúdo empurrar o rodapé para baixo */
+            flex: 1;
             max-width: 1100px;
             margin: 50px auto;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 25px;
-            padding: 0 20px 100px 20px; /* Padding extra no fundo para não cobrir o nome */
+            padding: 0 20px 100px 20px;
         }
 
         .card {
@@ -76,6 +280,11 @@
             color: #c77dff;
         }
 
+        .card h4 {
+            color: #9d4edd;
+            margin: 10px 0;
+        }
+
         .btn-link {
             display: inline-block;
             text-decoration: none;
@@ -85,9 +294,13 @@
             border-radius: 6px;
             font-weight: bold;
             transition: background 0.3s;
+            margin: 5px;
         }
 
-        /* Rodapé com seu nome */
+        .btn-link:hover {
+            background-color: #9d4edd;
+        }
+
         footer {
             background-color: #121212;
             border-top: 1px solid #7b2cbf;
@@ -104,260 +317,318 @@
             display: none;
         }
 
+        /* Ajustes responsivos */
+        @media (max-width: 700px) {
+            .home-header h1 {
+                font-size: 2rem;
+            }
+            .quadrados-grid {
+                gap: 15px;
+            }
+            .quadrado {
+                width: 150px;
+                padding: 20px 8px;
+            }
+            .info-card h3 {
+                font-size: 1.3rem;
+            }
+        }
     </style>
 </head>
 <body>
 
-<header>
+<!-- PÁGINA INICIAL (MODIFICADA COM CABEÇALHO, TEXTOS SOBRE MIM E COLEGIO, QUADRADOS E BOTÃO) -->
+<div class="home-page" id="homePage">
+    <div class="home-container">
+        
+        <!-- Cabeçalho com "Meu Portfólio" -->
+        <div class="home-header">
+            <h1>📁 Meu Portfólio</h1>
+            <div class="tagline">Ricardo Surek Corbaxo — 3° Ano A</div>
+        </div>
 
-    <h1>Ricardo Surek Corbaxo 3°A</h1>
+        <!-- Textos lado a lado: Sobre mim + Colégio Polo Arapongas -->
+        <div class="info-grid">
+            <div class="info-card">
+                <h3>🧑‍💻 Sobre mim</h3>
+                <p>Olá! Sou Ricardo, um entusiasta da tecnologia e da programação. Desde cedo, apaixonado por criar soluções criativas, explorar o mundo do desenvolvimento web, mobile e análise de dados. Gosto de transformar ideias em projetos reais e estou sempre em busca de aprender algo novo. Este portfólio reúne minha jornada no 3° ano com exercícios que mostram minha evolução.</p>
+            </div>
+            <div class="info-card">
+                <h3>🏫 Colégio Unidade Polo Arapongas</h3>
+                <p>O Colégio Unidade Polo de Arapongas é referência em ensino inovador e acolhedor, incentivando os alunos a explorarem a tecnologia, o empreendedorismo e o pensamento crítico. Aqui, tive a oportunidade de desenvolver projetos práticos com professores inspiradores, unindo teoria e prática para construir um futuro promissor. Orgulho de fazer parte dessa comunidade!</p>
+            </div>
+        </div>
 
-    <nav>
-        <button onclick="filtrar('todos', event)" class="active">Mostrar Todos</button>
-        <button onclick="filtrar('html', event)">HTML</button>
-        <button onclick="filtrar('js', event)">JS</button>
-        <button onclick="filtrar('python', event)">Python</button>
-        <button onclick="filtrar('analise', event)">Análise</button>
-        <button onclick="filtrar('mobile', event)">Mobile</button>
-    </nav>
-</header>
+        <!-- Seção "O que terá no portfólio" em forma de QUADRADOS -->
+        <div class="preview-section">
+            <h2>📌 O que você encontra aqui</h2>
+            <div class="quadrados-grid">
+                <div class="quadrado">
+                    <span class="emoji">🌐</span>
+                    <h4>HTML</h4>
+                    <p>Estruturas e páginas web interativas</p>
+                </div>
+                <div class="quadrado">
+                    <span class="emoji">⚡</span>
+                    <h4>JavaScript</h4>
+                    <p>Lógica, algoritmos e desafios</p>
+                </div>
+                <div class="quadrado">
+                    <span class="emoji">🐍</span>
+                    <h4>Python</h4>
+                    <p>Backend e scripts (em breve)</p>
+                </div>
+                <div class="quadrado">
+                    <span class="emoji">📊</span>
+                    <h4>Análise</h4>
+                    <p>Startups, negócios e IA</p>
+                </div>
+                <div class="quadrado">
+                    <span class="emoji">📱</span>
+                    <h4>Mobile</h4>
+                    <p>Apps com React Native / Expo</p>
+                </div>
+                <div class="quadrado">
+                    <span class="emoji">🚀</span>
+                    <h4>Projetos</h4>
+                    <p>GitHub e cases autorais</p>
+                </div>
+            </div>
+        </div>
 
-<div class="container">
-    <div class="card" data-category="html">
-        <h3>Exercício HTML</h3>
-        <h4>Hello wrord</h4>
-        <a href="https://github.com/binza575/hello-word/blob/main/hello%20wrord.html" target="_blank" class="btn-link">Ver Exercício</a>
+        <!-- Botão ENTRAR NO PORTFÓLIO (centralizado) -->
+        <div class="btn-wrapper">
+            <button class="btn-entrar" id="btnEntrar">✨ ENTRAR NO PORTFÓLIO ✨</button>
+        </div>
     </div>
-
-    <div class="card" data-category="html">
-        <h3>Exercício HTML</h3>
-        <h4>Pac-Man</h4>
-        <a href="https://binza575.github.io/pac-mem/pecmem.html" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    
-    <div class="card" data-category="html">
-        <h3>Exercício HTML</h3>
-        <h4>Coleção Copa do Mundo</h4>
-        <a href="https://binza575.github.io/cole-o-figurinhas/figurinhas.html" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-
-    
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Alterar</h4>
-        <a href="https://github.com/binza575/alterar/blob/main/alterar.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Array</h4>
-        <a href="https://github.com/binza575/array-fruta/blob/main/array.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Brake_continue</h4>
-        <a href="https://github.com/binza575/break-continue/blob/main/brake_continue.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Carro</h4>
-        <a href="https://github.com/binza575/carro/blob/main/Carro.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Cliente.json</h4>
-        <a href="https://github.com/binza575/cliente-json/blob/main/cliente.json" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Filtrar</h4>
-        <a href="https://github.com/binza575/filtrar/blob/main/filtrar.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Lista livros</h4>
-        <a href="https://github.com/binza575/lista-livros/blob/main/listalivros.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Média_se</h4>
-        <a href="https://github.com/binza575/lista-livros/blob/main/listalivros.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Colchete</h4>
-        <a href="https://github.com/binza575/colchete/blob/main/colchete.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Delta</h4>
-        <a href="https://github.com/binza575/delta/blob/main/delta.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Hello wrord</h4>
-        <a href="https://github.com/binza575/hello-whord/blob/main/hello%20wrord.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Leitura2</h4>
-        <a href="https://github.com/binza575/leitura2/blob/main/leitura2.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Media</h4>
-        <a href="https://github.com/binza575/media/blob/main/media_se.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Notas</h4>
-        <a href="https://github.com/binza575/notas/blob/main/notas.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Objeto</h4>
-        <a href="https://github.com/binza575/objeto/blob/main/objeto.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Operações</h4>
-        <a href="https://github.com/binza575/operacoes/blob/main/operacoes.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Triangulo</h4>
-        <a href="https://github.com/binza575/triangulo/blob/main/triangulo.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Usando break</h4>
-        <a href="https://github.com/binza575/usando-break/blob/main/usandobreak.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Usando form</h4>
-        <a href="https://github.com/binza575/usando-form/blob/main/usandoform.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>SelectionSort</h4>
-        <a href="https://github.com/binza575/selectionSort/blob/main/selectionSort.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Variaveis</h4>
-        <a href="https://github.com/binza575/variaveis/blob/main/variaveis.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Objet2</h4>
-        <a href="https://github.com/binza575/objet2/blob/main/objet2.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    
-    <div class="card" data-category="js">
-        <h3>Exercício JS</h3>
-        <h4>Ordenado</h4>
-        <a href="https://github.com/binza575/ordenado/blob/main/ordenado.js" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-    
-
-    <div class="card" data-category="analise">
-        <h3>Análise
-            <h4>Startups em 2026</h4>
-        </h3>
-        <a href="https://gamma.app/docs/Startups-em-2026-A-Vanguarda-da-Inovacao-2az7tt4390noy2l?mode=doc" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="analise">
-        <h3>Análise</h3>
-        <h4>Plano de negocios</h4>
-        <a href="https://gamma.app/docs/Plano-de-Negocios-Aplicativo-Agenda-Escolar-rig4f88pyoq8cu8?mode=doc" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="analise">
-        <h3>Análise</h3>
-        <h4>Aplicativo escolar</h4>
-        <a href="https://gamma.app/docs/Aplicativo-Escolar-A-Escola-na-Palma-da-Sua-Mao-k7of6kzcft325mv?mode=doc" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="analise">
-        <h3>Análise</h3>
-        <h4>Propriedade intelectual</h4>
-        <a href="https://gamma.app/docs/Propriedade-Intelectual-0pivkhtz1fkmn44?mode=doc" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="analise">
-        <h3>Análise</h3>
-        <h4>Metricas e melhorias nos negócios</h4>
-        <a href="https://gamma.app/docs/Metricas-e-Melhorias-nos-Negocios-keenpujabse1qco?mode=doc" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="python">
-        <h3>Exercício Python</h3>
-        <a href="LINK_AQUI" target="_blank" class="btn-link">Ver Exercício</a>
-    </div>
-
-    <div class="card" data-category="mobile">
-        <h3>Exercício Mobile</h3>
-        <h4>App simples</h4>
-        <a href="https://snack.expo.dev/@14092009rc/67efae" target="_blank" class="btn-link">Ver Exercício</a>
-        <a href="https://github.com/binza575/portifolio/blob/main/QRcode.png" target="_blank" class="btn-link">Ver QRcode</a>
-    </div>
-
-    <div class="card" data-category="mobile">
-        <h3>Exercício Mobile</h3>
-        <h4>App trocar imagens</h4>
-        <a href="https://snack.expo.dev/@14092009rc/eb5f29?platform=web" target="_blank" class="btn-link">Ver Exercício</a>
-        <a href="https://github.com/binza575/portifolio/blob/main/QRcode%20troca%20de%20imagens.png" target="_blank" class="btn-link">Ver QRcode</a>
-    </div>
-
-    
-    
-    
-
 </div>
 
-<footer>
-    Ricardo Surek Corbaxo 3°A
-</footer>
+<!-- PORTFÓLIO (cards mantidos e filtros) -->
+<div class="portfolio" id="portfolio" style="display: none;">
+    <header>
+        <h1>Ricardo Surek Corbaxo 3°A</h1>
+        <nav>
+            <button onclick="filtrar('todos', event)" class="active">Mostrar Todos</button>
+            <button onclick="filtrar('html', event)">HTML</button>
+            <button onclick="filtrar('js', event)">JS</button>
+            <button onclick="filtrar('python', event)">Python</button>
+            <button onclick="filtrar('analise', event)">Análise</button>
+            <button onclick="filtrar('mobile', event)">Mobile</button>
+        </nav>
+    </header>
+
+    <div class="container">
+        <!-- HTML CARDS -->
+        <div class="card" data-category="html">
+            <h3>Exercício HTML</h3>
+            <h4>Hello world</h4>
+            <a href="https://github.com/binza575/hello-word/blob/main/hello%20wrord.html" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="html">
+            <h3>Exercício HTML</h3>
+            <h4>Pac-Man</h4>
+            <a href="https://binza575.github.io/pac-mem/pecmem.html" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="html">
+            <h3>Exercício HTML</h3>
+            <h4>Coleção Copa do Mundo</h4>
+            <a href="https://binza575.github.io/cole-o-figurinhas/figurinhas.html" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+
+        <!-- JS CARDS -->
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Alterar</h4>
+            <a href="https://github.com/binza575/alterar/blob/main/alterar.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Array</h4>
+            <a href="https://github.com/binza575/array-fruta/blob/main/array.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Brake_continue</h4>
+            <a href="https://github.com/binza575/break-continue/blob/main/brake_continue.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Carro</h4>
+            <a href="https://github.com/binza575/carro/blob/main/Carro.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Cliente.json</h4>
+            <a href="https://github.com/binza575/cliente-json/blob/main/cliente.json" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Filtrar</h4>
+            <a href="https://github.com/binza575/filtrar/blob/main/filtrar.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Lista livros</h4>
+            <a href="https://github.com/binza575/lista-livros/blob/main/listalivros.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Média_se</h4>
+            <a href="https://github.com/binza575/lista-livros/blob/main/listalivros.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Colchete</h4>
+            <a href="https://github.com/binza575/colchete/blob/main/colchete.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Delta</h4>
+            <a href="https://github.com/binza575/delta/blob/main/delta.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Hello world</h4>
+            <a href="https://github.com/binza575/hello-whord/blob/main/hello%20wrord.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Leitura2</h4>
+            <a href="https://github.com/binza575/leitura2/blob/main/leitura2.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Media</h4>
+            <a href="https://github.com/binza575/media/blob/main/media_se.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Notas</h4>
+            <a href="https://github.com/binza575/notas/blob/main/notas.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Objeto</h4>
+            <a href="https://github.com/binza575/objeto/blob/main/objeto.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Operações</h4>
+            <a href="https://github.com/binza575/operacoes/blob/main/operacoes.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Triangulo</h4>
+            <a href="https://github.com/binza575/triangulo/blob/main/triangulo.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Usando break</h4>
+            <a href="https://github.com/binza575/usando-break/blob/main/usandobreak.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Usando form</h4>
+            <a href="https://github.com/binza575/usando-form/blob/main/usandoform.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>SelectionSort</h4>
+            <a href="https://github.com/binza575/selectionSort/blob/main/selectionSort.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Variaveis</h4>
+            <a href="https://github.com/binza575/variaveis/blob/main/variaveis.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Objet2</h4>
+            <a href="https://github.com/binza575/objet2/blob/main/objet2.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="js">
+            <h3>Exercício JS</h3>
+            <h4>Ordenado</h4>
+            <a href="https://github.com/binza575/ordenado/blob/main/ordenado.js" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+
+        <!-- Análise cards -->
+        <div class="card" data-category="analise">
+            <h3>Análise</h3>
+            <h4>Startups em 2026</h4>
+            <a href="https://gamma.app/docs/Startups-em-2026-A-Vanguarda-da-Inovacao-2az7tt4390noy2l?mode=doc" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="analise">
+            <h3>Análise</h3>
+            <h4>Plano de negocios</h4>
+            <a href="https://gamma.app/docs/Plano-de-Negocios-Aplicativo-Agenda-Escolar-rig4f88pyoq8cu8?mode=doc" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="analise">
+            <h3>Análise</h3>
+            <h4>Aplicativo escolar</h4>
+            <a href="https://gamma.app/docs/Aplicativo-Escolar-A-Escola-na-Palma-da-Sua-Mao-k7of6kzcft325mv?mode=doc" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="analise">
+            <h3>Análise</h3>
+            <h4>Propriedade intelectual</h4>
+            <a href="https://gamma.app/docs/Propriedade-Intelectual-0pivkhtz1fkmn44?mode=doc" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="analise">
+            <h3>Análise</h3>
+            <h4>Metricas e melhorias nos negócios</h4>
+            <a href="https://gamma.app/docs/Metricas-e-Melhorias-nos-Negocios-keenpujabse1qco?mode=doc" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="analise">
+            <h3>Análise</h3>
+            <h4>Video sobre as melhores IAs</h4>
+            <a href="https://notebooklm.google.com/notebook/bd558ceb-833b-4f04-b0c3-c67797656c20" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+        <div class="card" data-category="analise">
+            <h3>Análise</h3>
+            <h4>apresentação 30 anos</h4>
+            <a href="https://notebooklm.google.com/notebook/614d746d-96d4-4243-b995-98e9b1d35cc8" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+
+        <!-- Python (em breve) -->
+        <div class="card" data-category="python">
+            <h3>Exercício Python</h3>
+            <h4>Em breve...</h4>
+            <a href="#" target="_blank" class="btn-link">Ver Exercício</a>
+        </div>
+
+        <!-- Mobile -->
+        <div class="card" data-category="mobile">
+            <h3>Exercício Mobile</h3>
+            <h4>App simples</h4>
+            <a href="https://snack.expo.dev/@14092009rc/67efae" target="_blank" class="btn-link">Ver Exercício</a>
+            <a href="https://github.com/binza575/portifolio/blob/main/QRcode.png" target="_blank" class="btn-link">Ver QRcode</a>
+        </div>
+        <div class="card" data-category="mobile">
+            <h3>Exercício Mobile</h3>
+            <h4>App trocar imagens</h4>
+            <a href="https://snack.expo.dev/@14092009rc/eb5f29?platform=web" target="_blank" class="btn-link">Ver Exercício</a>
+            <a href="https://github.com/binza575/portifolio/blob/main/QRcode%20troca%20de%20imagens.png" target="_blank" class="btn-link">Ver QRcode</a>
+        </div>
+    </div>
+
+    <footer>
+        Ricardo Surek Corbaxo 3°A
+    </footer>
+</div>
 
 <script>
+    // Função para filtrar os cards
     function filtrar(categoria, event) {
         const cards = document.querySelectorAll('.card');
         const botoes = document.querySelectorAll('nav button');
 
         botoes.forEach(btn => btn.classList.remove('active'));
-        event.currentTarget.classList.add('active');
+        if (event && event.currentTarget) {
+            event.currentTarget.classList.add('active');
+        } else {
+            // fallback para caso de chamada direta
+            document.querySelector('nav button')?.classList.add('active');
+        }
 
         cards.forEach(card => {
             if (categoria === 'todos' || card.getAttribute('data-category') === categoria) {
@@ -367,6 +638,21 @@
             }
         });
     }
+
+    // Transição da página inicial para o portfólio
+    const homePage = document.getElementById('homePage');
+    const portfolio = document.getElementById('portfolio');
+    const btnEntrar = document.getElementById('btnEntrar');
+
+    btnEntrar.addEventListener('click', () => {
+        homePage.classList.add('hidden');
+        setTimeout(() => {
+            homePage.style.display = 'none';
+            portfolio.style.display = 'flex';
+            // ao entrar no portfólio, garantir que todos os cards apareçam inicialmente
+            filtrar('todos', { currentTarget: document.querySelector('nav button') });
+        }, 500);
+    });
 </script>
 
 </body>
